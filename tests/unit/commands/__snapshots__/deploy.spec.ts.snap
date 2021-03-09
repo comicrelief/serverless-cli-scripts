@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`unit.commands.deploy deploy with stage: dev returns status code 0 1`] = `0`;
+
+exports[`unit.commands.deploy deploy with stage: dev throws with an exit code > 0 1`] = `undefined`;
+
+exports[`unit.commands.deploy deploy with stage: production accepts 'deploy-to-production' 1`] = `0`;
+
+exports[`unit.commands.deploy deploy with stage: production fails with any text 1`] = `"Bailing out."`;
+
+exports[`unit.commands.deploy deploy with stage: staging returns status code 0 1`] = `0`;
+
+exports[`unit.commands.deploy deploy with stage: staging throws with an exit code > 0 1`] = `undefined`;

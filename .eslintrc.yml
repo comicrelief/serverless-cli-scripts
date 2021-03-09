@@ -1,0 +1,13 @@
+root: true
+
+extends:
+  - "@comicrelief/eslint-config/mixins/base"
+  - "@comicrelief/eslint-config/mixins/jsdoc"
+  - "@comicrelief/eslint-config/mixins/ts"
+
+ignorePatterns:
+  - dist
+  - src/utils.ts # Disable until ESlint supports TypeScript 4.1
+rules:
+  no-shadow: "off"
+  camelcase: "off"
