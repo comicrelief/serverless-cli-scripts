@@ -14,6 +14,7 @@ export interface CLIArgs {
   _: (string | number)[];
   $0: string;
   stage?: string;
+  'env-path'?: string;
 }
 
 export interface Commands {
@@ -22,21 +23,41 @@ export interface Commands {
 
 export interface CLIRunnerOptions<T extends Commands> {
   getArgs: () => CLIArgs,
-  loadEnv?: (stage: string) => Promise<void>;
+  loadEnv?: (context: CLIArgs) => Promise<void>;
   commands: T
 }
 
 /**
+ * Generates the env path, given the CLI args
+ *
+ * 1. Defaults to context['env-path'] (i.e., yarn cli [command] --env-path your-path)
+ * 2. Uses the CWD + the stage to generate a filepath
+ *
+ * @param context
+ */
+export const getEnvFilePath = (context: CLIArgs): string => {
+  const envPath = context['env-path'];
+
+  if (envPath) {
+    return path.resolve(envPath);
+  }
+
+  const envFileName = context.stage && context.stage !== 'dev' ? `.env.${context.stage}` : '.env';
+
+  return path.resolve(process.cwd(), envFileName);
+};
+
+/**
  * Loads the environment variables
  *
- * @param {string} stage
+ * @param context
  */
-export const loadEnv = (stage = ''): void => {
-  const envFileName = stage && stage !== 'dev' ? `../.env.${stage}` : '../.env';
-  const envFile = path.resolve(__dirname, envFileName);
-  consola.info(`Using env file: '${envFile}'`);
+export const loadEnv = (context: CLIArgs): void => {
+  const envFilePath = getEnvFilePath(context);
 
-  config({ path: envFile });
+  consola.info(`Using env file: '${envFilePath}'`);
+
+  config({ path: envFilePath });
 };
 
 /**
@@ -58,7 +79,7 @@ export const runner = async <T extends Commands>(options: CLIRunnerOptions<T>): 
     consola.info(`Running: ${command}`);
 
     // Default to using `loadEnv`
-    (options.loadEnv || loadEnv)(context.stage || '');
+    (options.loadEnv || loadEnv)(context);
 
     await executor(context);
   } catch (error) {
