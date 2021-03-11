@@ -65,7 +65,7 @@ export const deploy = async (context: DeployContext): Promise<number> => {
     stage,
     '--region',
     context.region || '',
-    ...(context.flags || '').split(' '),
+    ...(context.flags?.split(' ') || []),
   ];
 
   return utils.spawn(command, commandArgs);
