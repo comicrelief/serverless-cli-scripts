@@ -8,21 +8,11 @@ import consola from 'consola';
  * @param command
  * @param commandArgs
  */
-export const spawn = async (command: string, commandArgs?: string[], quiet = false): Promise<number> => {
+export const spawn = async (command: string, commandArgs: string[] = [], quiet = false): Promise<number> => {
   return new Promise((resolve, reject) => {
-    const childProcess = childProcessSpawn(command, commandArgs);
+    const childProcess = childProcessSpawn(command, commandArgs, { stdio: "inherit" });
 
-    if (!quiet) {
-      consola.info(`Executing: '${command} ${(commandArgs || []).join(' ')}'`);
-
-      childProcess.stdout.on('data', (data) => {
-        consola.info(data.toString());
-      });
-
-      childProcess.stderr.on('data', (data) => {
-        consola.error(data.toString());
-      });
-    }
+    consola.info(`Executing: '${command} ${(commandArgs || []).join(' ')}'`);
 
     childProcess.on('exit', (code) => {
       const exitCode = code || 0;
